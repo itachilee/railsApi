@@ -5,28 +5,39 @@ module Api
 
       def index
         posts = Post.order(created_at: :desc)
-        render json: { status: 'SUCCESS', message: 'Loaded posts', data: posts }
+        render json: {status: 'SUCCESS', message: 'Loaded posts', data: posts}
       end
 
       def show
         # render json: { status: 'SUCCESS', message: 'Loaded the post', data: @post }
-        render json: { status: 'SUCCESS', message: 'Loaded the post', data: post_params }
+        render json: {status: 'SUCCESS', message: 'Loaded the post', data: @post}
+      end
+
+      def count
+        # render json: { status: 'SUCCESS', message: 'Loaded the post', data: @post }
+        @post = Post.group(:title).count
+        render json: {status: 'SUCCESS', message: 'Loaded the post', data: @post}
+      end
+
+      def info
+        @post = Post.find(params[:id])
+        render json: {status: 'SUCCESS', message: 'Loaded the post', data: @post}
       end
 
       def create
         post = Post.new(post_params)
         if post.save
-          render json: { status: 'SUCCESS', data: post }
+          render json: {status: 'SUCCESS', data: post}
         else
-          render json: { status: 'ERROR', data: post.errors.exception }
+          render json: {status: 'ERROR', data: post.errors}
         end
       end
 
       def destroy
         if @post.destroy
-          render json: { status: 'SUCCESS', message: 'Deleted the post', data: @post }
+          render json: {status: 'SUCCESS', message: 'Deleted the post', data: @post}
         else
-          render json: { status: 'ERROR',data: @post.error.exception }
+          render json: {status: 'ERROR', data: @post.error}
         end
       end
 
@@ -34,7 +45,7 @@ module Api
         if @post.update(post_params)
           render json: {status: 'SUCCESS', message: 'Updated the post', data: @post}
         else
-          render json: { status: 'SUCCESS', message: 'Not updated', data: @post.errors.exception }
+          render json: {status: 'SUCCESS', message: 'Not updated', data: @post.errors}
         end
       end
 
@@ -45,7 +56,7 @@ module Api
       end
 
       def post_params
-        params.require(:post).permit(:title)
+        params.require(:post).permit(:title, :vote)
       end
     end
   end
